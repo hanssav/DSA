@@ -16,9 +16,7 @@ function findCenter(edges: number[][]): number {
         m.set(b, m.get(b) + 1);
     }
 
-    console.log(stars, m)
     const [res] = stars.filter((star) => m.get(star) === stars.length - 1)
 
-    console.log(res, 'res')
     return res
 };
