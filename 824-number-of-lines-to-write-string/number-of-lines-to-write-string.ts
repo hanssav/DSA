@@ -13,8 +13,6 @@ function numberOfLines(widths: number[], s: string): number[] {
             lines++
             curr_widths = 0
         }
-        console.log(curr_widths, 'curr')
-        console.log(word, idx, s[i])
     }
     return [lines, curr_widths]
 };
