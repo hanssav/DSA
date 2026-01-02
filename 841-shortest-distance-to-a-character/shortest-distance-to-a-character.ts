@@ -20,5 +20,7 @@ function shortestToChar(s: string, c: string): number[] {
         res[i] = Math.min(res[i], pos - i)
     }
 
+    // console.log(res, 'res 2')
+
     return res
 };
