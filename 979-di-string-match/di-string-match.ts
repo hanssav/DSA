@@ -2,7 +2,6 @@ function diStringMatch(s: string): number[] {
     const nums: number[] = Array.from({length: s.length + 1}, (_, i) => i) 
     const res: number[] = []
 
-    console.log(nums, 'nums')
     for(let str of s){
         let num = 0; 
 
