@@ -5,12 +5,9 @@ function findOcurrences(text: string, first: string, second: string): string[] {
 
     while(idx < strs.length){
         if(strs[idx] === first){
-            if(strs[idx + 1] === second && !!strs[idx + 2]) res.push(strs[idx + 2])
-            idx += 1; 
-        } else {
-            idx++;
-        }
-        console.log(res, idx, strs[idx])
+            if(strs[idx + 1] === second && !!strs[idx + 2]) res.push(strs[idx + 2]) 
+        } 
+        idx++
     } 
 
     return res 
