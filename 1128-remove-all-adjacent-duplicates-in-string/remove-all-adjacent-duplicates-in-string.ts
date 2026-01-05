@@ -8,8 +8,6 @@ function removeDuplicates(s: string): string {
             stack.pop();
         } else stack.push(str)
     }
-
-    console.log(stack, 'stack'); 
     
     let res = ""
     stack.forEach(a => res += a)
