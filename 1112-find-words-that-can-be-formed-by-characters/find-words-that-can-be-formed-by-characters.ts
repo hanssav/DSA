@@ -6,8 +6,6 @@ function countCharacters(words: string[], chars: string): number {
         m.set(char, m.get(char) + 1); 
     }  
 
-    console.log(m, 'm')
-
     function is_formed(str){
         const str_map = new Map(); 
 
@@ -15,7 +13,6 @@ function countCharacters(words: string[], chars: string): number {
             if(!str_map.has(a)) str_map.set(a, 0)
             str_map.set(a, str_map.get(a) + 1); 
 
-            console.log(m.has(a))
             if(!m.has(a) || str_map.get(a) > m.get(a)) return false; 
         }
         return true;
@@ -24,7 +21,6 @@ function countCharacters(words: string[], chars: string): number {
     let count = 0; 
 
     for(let word of words){
-        console.log(is_formed(word), 'is_formed(word)', word)
         if(is_formed(word)){
             count += word.length; 
         }
