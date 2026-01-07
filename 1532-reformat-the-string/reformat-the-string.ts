@@ -12,14 +12,14 @@ function reformat(s: string): string {
 
     const res = []; 
 
-    console.log(letters, digits)
+    // console.log(letters, digits)
 
     const render_res = (first, second, f_len) => {
-        console.log(first, second, f_len, 'first')
+        // console.log(first, second, f_len, 'first')
         for(let i = 0; i < f_len; i++){
             res.push(first[i])
             if(!!second[i]) res.push(second[i])
-            console.log(res, 'res')
+            // console.log(res, 'res')
         }
     }
 
