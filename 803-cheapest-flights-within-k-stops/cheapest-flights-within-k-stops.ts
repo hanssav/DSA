@@ -15,46 +15,39 @@ function findCheapestPrice(n: number, flights: number[][], src: number, dst: num
     * check has visited too; 
     */
 
-    const adj = new Map<number, [number, number][]>();
-    for (const [s, d, p] of flights) {
-        if (!adj.has(s)) adj.set(s, []);
-        adj.get(s)!.push([d, p]);
+    const m = new Map(); 
+    for(let [s, d, p] of flights){
+        if(!m.has(s)) m.set(s, [])
+        m.get(s)!.push([d, p]); 
     }
 
-    // Array untuk mencatat harga termurah ke setiap kota
-    const minPrices = new Array(n).fill(Infinity);
-    minPrices[src] = 0;
+    // --- TAMBAHKAN INI: Catatan harga termurah ke setiap kota ---
+    const minPriceToCity = new Array(n).fill(Infinity);
+    minPriceToCity[src] = 0;
+    // ----------------------------------------------------------
 
-    // queue: [current_city, current_total_price, stops_count]
-    let queue: [number, number, number][] = [[src, 0, 0]];
-    let res = Infinity;
+    const queue: [number, number, number][] = [[src, 0, 0]]; 
+    let res = Infinity; 
 
-    while (queue.length > 0) {
-        const [u, totalPrice, stops] = queue.shift()!;
+    while(queue.length > 0){
+        const [city, total_price, stops] = queue.shift()!; 
 
-        // Jika jumlah perhentian (transit) sudah melebihi k
-        // Kita hitung penerbangan, jadi maksimal k transit = k + 1 penerbangan
-        if (stops > k) continue;
+        // Berhenti jika sudah lebih dari k transit
+        if(stops > k) continue; 
 
-        const neighbors = adj.get(u) || [];
-        for (const [v, price] of neighbors) {
-            const newPrice = totalPrice + price;
+        for(const [next, cost] of m.get(city) || [] ) {
+            const newPrice = total_price + cost;
 
-            // OPTIMASI UTAMA: 
-            // Hanya masukkan ke antrean jika harga baru lebih murah 
-            // dari yang pernah ditemukan untuk kota tersebut
-            if (newPrice < minPrices[v]) {
-                minPrices[v] = newPrice;
+            // LOGIKA "BERITA BAGUS":
+            // Hanya lanjut jika harga baru ini lebih murah dari yang pernah ada
+            if(newPrice < minPriceToCity[next]) {
+                minPriceToCity[next] = newPrice;
                 
-                if (v === dst) {
+                if(next === dst) {
                     res = Math.min(res, newPrice);
                 } else {
-                    queue.push([v, newPrice, stops + 1]);
+                    queue.push([next, newPrice, stops + 1]);
                 }
-            } else if (v === dst) {
-                // Khusus untuk destinasi, kita tetap update res jika lebih murah
-                // walaupun mungkin tidak lebih murah dari minPrices[v] (kasus edge)
-                res = Math.min(res, newPrice);
             }
         }
     }
