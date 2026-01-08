@@ -8,9 +8,6 @@ function sortArrayByParityII(nums: number[]): number[] {
     while(e < len && o < len){
         const mod_e = nums[e] % 2
         const mod_o = nums[o] % 2
-        
-        console.log(mod_e,  mod_o, e, o)
-        console.log(mod_e !== 0, 'mod e', mod_o === 0)
 
         if(mod_e !== 0 && mod_o === 0){
             [nums[e], nums[o]] = [nums[o], nums[e]]; 
