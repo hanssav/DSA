@@ -13,6 +13,6 @@ function shiftGrid(grid: number[][], k: number): number[][] {
         res.push(flat.slice(i, i + cols))
     } 
     
-    console.log(flat, res)
+    // console.log(flat, res)
     return res
 };
