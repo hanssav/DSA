@@ -4,7 +4,7 @@ function canVisitAllRooms(rooms: number[][]): boolean {
 
     function dfs(node: number){
         
-        console.log(node, 'node')
+        // console.log(node, 'node')
 
         keys[node] = 1; 
 
