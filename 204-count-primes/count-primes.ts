@@ -1,22 +1,28 @@
 function countPrimes(n: number): number {
-    function isPrime(val: number): boolean{
-        if(val <= 1) return false;
-        else if( val === 2) return true;
-        else if(val % 2 === 0) return false; 
+    if (n <= 2) return 0;
 
-        const limit = Math.sqrt(val); 
+    // Gunakan Uint8Array untuk efisiensi memori (1 = prima, 0 = bukan)
+    const isPrime = new Uint8Array(n).fill(1);
+    isPrime[0] = 0;
+    isPrime[1] = 0;
 
-        for(let i = 3; i <= limit; i += 2){
-            if(val % i === 0) return false;
+    const limit = Math.sqrt(n);
+
+    for (let i = 2; i <= limit; i++) {
+        if (isPrime[i] === 1) {
+            // Optimasi: mulai mencoret dari i * i
+            // Kelipatan di bawah i * i pasti sudah dicoret oleh angka sebelumnya
+            for (let j = i * i; j < n; j += i) {
+                isPrime[j] = 0;
+            }
         }
-        
-        return true;
     }
 
-    let count: number = 0;
-    for(let i = 1; i < n; i++){
-        if(isPrime(i)) count++;
+    // Hitung sisa angka yang masih tertanda 1
+    let count = 0;
+    for (let i = 2; i < n; i++) {
+        if (isPrime[i] === 1) count++;
     }
 
     return count;
-};
+}
