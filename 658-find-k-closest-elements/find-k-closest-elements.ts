@@ -8,7 +8,6 @@ function findClosestElements(arr: number[], k: number, x: number): number[] {
         
         if(disL === disR || disR > disL) r--;
         else l++; 
-        console.log(l, r)
     }
 
     return arr.slice(l, r + 1);
