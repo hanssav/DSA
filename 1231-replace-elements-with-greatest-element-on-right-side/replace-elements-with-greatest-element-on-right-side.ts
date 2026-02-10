@@ -1,12 +1,12 @@
 function replaceElements(arr: number[]): number[] {
-    const n = arr.length;
-    const result = new Array(n);
     let max = -1;
     
-    for (let i = n - 1; i >= 0; i--) {
-        result[i] = max;
-        max = Math.max(max, arr[i]);
+    // Iterasi dari kanan ke kiri
+    for (let i = arr.length - 1; i >= 0; i--) {
+        const current = arr[i];  // Simpan nilai asli
+        arr[i] = max;           // Ganti dengan max sebelah kanan
+        max = Math.max(max, current); // Update max
     }
     
-    return result;
+    return arr;
 }
