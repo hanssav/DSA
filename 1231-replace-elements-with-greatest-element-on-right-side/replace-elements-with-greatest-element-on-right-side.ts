@@ -2,14 +2,17 @@ function replaceElements(arr: number[]): number[] {
     const res = [];
     const n = arr.length; 
 
-    for(let i = 0; i < n; i++){
-        let gr = -1; 
+    let max = 0; 
 
-        for(let j = i + 1; j < n; j++){
-            if(arr[j] > gr) gr = arr[j]
-        }
+    for(let curr = 0; curr < n; curr++){
+         if(curr === max){
+            max = -1
+            for(let j = curr + 1; j < n; j++){
+                if(arr[j] > (arr[max] || 0)) max = j;
+             }
+         }
 
-        res.push(gr)
+        res.push(arr[max] ?? -1)
     }
 
     return res;
