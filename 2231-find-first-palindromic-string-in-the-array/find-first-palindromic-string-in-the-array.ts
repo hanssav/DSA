@@ -1,6 +1,15 @@
 function isPalindromic(str: string): boolean {
-    const reversedStr = str.split("").reverse().join(""); 
-    return str === reversedStr;
+    let left = 0; 
+    let right = str.length - 1; 
+
+    while (right > left){
+        if(str[left] !== str[right]) return false;
+    
+        left++; 
+        right--;
+    }
+
+    return true;
 }
 
 
