@@ -1,22 +1,27 @@
 function sumOfEncryptedInt(nums: number[]): number {
-    let sum = 0; 
+    let sum = 0;
 
-    for(let i = 0; i < nums.length; i++){
-        let val = nums[i].toString().split(""); 
+    for (let num of nums) {
+        let temp = num;
+        let maxDigit = 0;
+        let digitCount = 0;
 
-        let max = 0;
-        for(let j = 0; j < val.length; j++){
-            if(Number(val[j]) > max) max = Number(val[j]);
+        // Cari max digit & hitung panjang digit
+        while (temp > 0) {
+            const digit = temp % 10;
+            maxDigit = Math.max(maxDigit, digit);
+            temp = Math.floor(temp / 10);
+            digitCount++;
         }
-        
-        const acc = [];
 
-        for(let z = 0; z < val.length; z++){
-            acc.push(max)
+        // Bangun angka encrypted
+        let encrypted = 0;
+        for (let i = 0; i < digitCount; i++) {
+            encrypted = encrypted * 10 + maxDigit;
         }
 
-        sum += Number(acc.join(""));
-    };
+        sum += encrypted;
+    }
 
-    return sum
-};
+    return sum;
+}
