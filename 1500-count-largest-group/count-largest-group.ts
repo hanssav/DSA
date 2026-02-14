@@ -1,5 +1,7 @@
 function countLargestGroup(n: number): number {
     let map = new Map<number, number>();
+    let count = new Map<number, number>();
+
     let largest = 0; 
 
     for(let i = 1; i <= n; i++){
@@ -12,15 +14,16 @@ function countLargestGroup(n: number): number {
         }
 
         map.set(sum, (map.get(sum) || 0) + 1)
-        
+        count.set(map.get(sum), (count.get(map.get(sum)) || 0) + 1);
         largest = Math.max(largest, map.get(sum));
     }
 
-    let res = 0;
+    // console.log(count, 'count')
+    // let res = 0;
 
-    for(const count of map.values()) {
-        if(count === largest) res++;
-    }
+    // for(const count of map.values()) {
+    //     if(count === largest) res++;
+    // }
   
-    return res;
+    return count.get(largest);
 };
