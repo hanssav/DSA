@@ -18,7 +18,7 @@ function countLargestGroup(n: number): number {
 
     let res = 0;
 
-    for(const [_, count] of map) {
+    for(const count of map.values()) {
         if(count === largest) res++;
     }
   
