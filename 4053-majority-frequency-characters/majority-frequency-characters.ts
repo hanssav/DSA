@@ -16,7 +16,6 @@ function majorityFrequencyGroup(s: string): string {
     let maxSize = 0; 
     let bestFreq = 0; 
 
-    console.log(groupMap)
     for(const [freq, chars] of groupMap){
         if(
             chars.length > maxSize ||
