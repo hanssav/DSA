@@ -13,17 +13,16 @@ function maxProfitAssignment(difficulty: number[], profit: number[], worker: num
     worker.sort((a, b) => a - b); 
     
     let total = 0; 
+    let max_profit = 0;
+    let j = 0;
 
     for(let i = 0; i < worker.length; i++){
-        let max = 0;
+        while(j < job_detail.length && job_detail[j][0] <= worker[i]){
+            max_profit = Math.max(max_profit, job_detail[j][1]);
+            j++;
+        }; 
 
-        for(let j = 0; j < job_detail.length; j++){
-            if(worker[i] < job_detail[j][0]) break;
-
-            max = Math.max(max, job_detail[j][1])
-        }
-
-        total += max;
+        total += max_profit
     }
 
     return total;
