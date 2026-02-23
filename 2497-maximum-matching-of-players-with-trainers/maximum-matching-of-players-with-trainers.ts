@@ -4,8 +4,6 @@ function matchPlayersAndTrainers(players: number[], trainers: number[]): number 
     players.sort((a, b) => a - b); 
     trainers.sort((a, b) => a - b); 
 
-    const target = players[0]; 
-
     let player = 0, trainer = 0, count = 0;  
 
     while(player < players.length && trainer < trainers.length){
