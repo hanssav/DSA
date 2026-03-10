@@ -8,11 +8,8 @@ function countValidSelections(nums: number[]): number {
             const left = runningSum;
             const right = totalSum - runningSum;
 
-            if (left === right) {
-                count += 2;
-            } else if (Math.abs(left - right) === 1) {
-                count += 1;
-            }
+            if (left === right) count += 2;
+            else if (Math.abs(left - right) === 1) count += 1;
         } else {
             runningSum += nums[i];
         }
