@@ -19,15 +19,15 @@
 function uniquePaths(m: number, n: number): number {
     const dp: number[][] = Array(m).fill(0).map(() => Array(n).fill(1)); 
 
-    console.log(dp, 'dp')
+    // console.log(dp, 'dp')
     for (let i = 1; i < m; i++) {
         for (let j = 1; j < n; j++) {
             // Cara mencapai (i,j) = cara dari atas + cara dari kiri
             dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
 
-            console.log(dp)
+            // console.log(dp)
         }
-        console.log("====")
+        // console.log("====")
 
     }
 
