@@ -111,29 +111,67 @@
 //     return dp[n - 1];
 // }
 
+// function minPathSum(grid: number[][]): number {
+//     const m = grid.length;
+//     const n = grid[0].length;
+
+//     // 1. Baris pertama (kalkulasi manual untuk hindari 'if' di dalam loop utama)
+//     for (let j = 1; j < n; j++) {
+//         grid[0][j] += grid[0][j - 1];
+//     }
+
+//     // 2. Kolom pertama (kalkulasi manual)
+//     for (let i = 1; i < m; i++) {
+//         grid[i][0] += grid[i - 1][0];
+//     }
+
+//     // 3. Loop utama (Tanpa 'if' sama sekali di dalam)
+//     for (let i = 1; i < m; i++) {
+//         const currentRow = grid[i];
+//         const prevRow = grid[i - 1];
+//         for (let j = 1; j < n; j++) {
+//             // Akses langsung dan ternary - ini jalur tercepat bagi compiler V8
+//             const top = prevRow[j];
+//             const left = currentRow[j - 1];
+//             currentRow[j] += (top < left ? top : left);
+//         }
+//     }
+
+//     return grid[m - 1][n - 1];
+// }
+
+
 function minPathSum(grid: number[][]): number {
     const m = grid.length;
     const n = grid[0].length;
 
-    // 1. Baris pertama (kalkulasi manual untuk hindari 'if' di dalam loop utama)
-    for (let j = 1; j < n; j++) {
-        grid[0][j] += grid[0][j - 1];
-    }
+    // 1. Pre-processing baris/kolom pertama
+    for (let j = 1; j < n; j++) grid[0][j] += grid[0][j - 1];
+    for (let i = 1; i < m; i++) grid[i][0] += grid[i - 1][0];
 
-    // 2. Kolom pertama (kalkulasi manual)
+    // 2. Loop Utama dengan Trik "Manual Unrolling"
     for (let i = 1; i < m; i++) {
-        grid[i][0] += grid[i - 1][0];
-    }
-
-    // 3. Loop utama (Tanpa 'if' sama sekali di dalam)
-    for (let i = 1; i < m; i++) {
-        const currentRow = grid[i];
-        const prevRow = grid[i - 1];
-        for (let j = 1; j < n; j++) {
-            // Akses langsung dan ternary - ini jalur tercepat bagi compiler V8
-            const top = prevRow[j];
-            const left = currentRow[j - 1];
-            currentRow[j] += (top < left ? top : left);
+        const cur = grid[i];
+        const pre = grid[i - 1];
+        
+        let j = 1;
+        // Kita proses 2 kolom sekaligus untuk mengurangi overhead 'j++' dan 'j < n'
+        for (; j < n - 1; j += 2) {
+            // Kolom J
+            const topJ = pre[j];
+            const leftJ = cur[j - 1];
+            cur[j] += (topJ < leftJ ? topJ : leftJ);
+            
+            // Kolom J + 1
+            const topJ1 = pre[j + 1];
+            const leftJ1 = cur[j]; // Pakai nilai yang baru diupdate
+            cur[j + 1] += (topJ1 < leftJ1 ? topJ1 : leftJ1);
+        }
+        
+        // Sisa kolom kalau n ganjil
+        for (; j < n; j++) {
+            const t = pre[j], l = cur[j - 1];
+            cur[j] += (t < l ? t : l);
         }
     }
 
