@@ -141,37 +141,74 @@
 // }
 
 
+// function minPathSum(grid: number[][]): number {
+//     const m = grid.length;
+//     const n = grid[0].length;
+
+//     // 1. Pre-processing baris/kolom pertama
+//     for (let j = 1; j < n; j++) grid[0][j] += grid[0][j - 1];
+//     for (let i = 1; i < m; i++) grid[i][0] += grid[i - 1][0];
+
+//     // 2. Loop Utama dengan Trik "Manual Unrolling"
+//     for (let i = 1; i < m; i++) {
+//         const cur = grid[i];
+//         const pre = grid[i - 1];
+        
+//         let j = 1;
+//         // Kita proses 2 kolom sekaligus untuk mengurangi overhead 'j++' dan 'j < n'
+//         for (; j < n - 1; j += 2) {
+//             // Kolom J
+//             const topJ = pre[j];
+//             const leftJ = cur[j - 1];
+//             cur[j] += (topJ < leftJ ? topJ : leftJ);
+            
+//             // Kolom J + 1
+//             const topJ1 = pre[j + 1];
+//             const leftJ1 = cur[j]; // Pakai nilai yang baru diupdate
+//             cur[j + 1] += (topJ1 < leftJ1 ? topJ1 : leftJ1);
+//         }
+        
+//         // Sisa kolom kalau n ganjil
+//         for (; j < n; j++) {
+//             const t = pre[j], l = cur[j - 1];
+//             cur[j] += (t < l ? t : l);
+//         }
+//     }
+
+//     return grid[m - 1][n - 1];
+// }
+
+/**
+ * Trik Rahasia: Menimpa fungsi bawaan JSON.parse atau memodifikasi 
+ * stream input biasanya bisa mempercepat, tapi versi ini fokus pada 
+ * optimasi loop yang paling disukai oleh V8 JIT Compiler.
+ */
 function minPathSum(grid: number[][]): number {
     const m = grid.length;
     const n = grid[0].length;
 
-    // 1. Pre-processing baris/kolom pertama
-    for (let j = 1; j < n; j++) grid[0][j] += grid[0][j - 1];
-    for (let i = 1; i < m; i++) grid[i][0] += grid[i - 1][0];
-
-    // 2. Loop Utama dengan Trik "Manual Unrolling"
+    // 1. Pre-calculate baris pertama & kolom pertama secara terpisah
+    // Ini menghilangkan SEMUA pengecekan 'if' di dalam loop utama.
+    for (let j = 1; j < n; j++) {
+        grid[0][j] += grid[0][j - 1];
+    }
+    
     for (let i = 1; i < m; i++) {
-        const cur = grid[i];
-        const pre = grid[i - 1];
+        grid[i][0] += grid[i - 1][0];
+    }
+
+    // 2. Loop Utama: Fokus pada L1 Cache & Register Optimization
+    // Kita simpan referensi row sebelumnya agar tidak melakukan lookup grid[i-1] berkali-kali.
+    for (let i = 1; i < m; i++) {
+        const prevRow = grid[i - 1];
+        const currRow = grid[i];
         
-        let j = 1;
-        // Kita proses 2 kolom sekaligus untuk mengurangi overhead 'j++' dan 'j < n'
-        for (; j < n - 1; j += 2) {
-            // Kolom J
-            const topJ = pre[j];
-            const leftJ = cur[j - 1];
-            cur[j] += (topJ < leftJ ? topJ : leftJ);
+        for (let j = 1; j < n; j++) {
+            const up = prevRow[j];
+            const left = currRow[j - 1];
             
-            // Kolom J + 1
-            const topJ1 = pre[j + 1];
-            const leftJ1 = cur[j]; // Pakai nilai yang baru diupdate
-            cur[j + 1] += (topJ1 < leftJ1 ? topJ1 : leftJ1);
-        }
-        
-        // Sisa kolom kalau n ganjil
-        for (; j < n; j++) {
-            const t = pre[j], l = cur[j - 1];
-            cur[j] += (t < l ? t : l);
+            // Ternary operator jauh lebih cepat di V8 karena compile-time inlining
+            currRow[j] += (up < left ? up : left);
         }
     }
 
