@@ -74,39 +74,68 @@
 //     return grid[m - 1][n - 1];
 // }
 
+// function minPathSum(grid: number[][]): number {
+//     const m = grid.length;
+//     if (m === 0) return 0;
+//     const n = grid[0].length;
+
+//     // 1. Pakai 1D TypedArray (Uint32Array) - Lebih cepat di memori dibanding Array biasa
+//     // Kita hanya butuh satu baris untuk menyimpan state (Space: O(n))
+//     const dp = new Uint32Array(n);
+
+//     // 2. Pre-fill elemen pertama
+//     dp[0] = grid[0][0];
+
+//     // 3. Isi baris pertama (Hanya bisa gerak ke kanan)
+//     for (let j = 1; j < n; j++) {
+//         dp[j] = dp[j - 1] + grid[0][j];
+//     }
+
+//     // 4. Proses baris sisanya
+//     for (let i = 1; i < m; i++) {
+//         const row = grid[i]; // Cache baris agar tidak akses properti berulang kali
+        
+//         // Update kolom pertama baris i (Hanya bisa dari atas)
+//         dp[0] += row[0];
+
+//         for (let j = 1; j < n; j++) {
+//             // 5. Gunakan operator Ternary daripada Math.min
+//             // Math.min adalah function call yang punya overhead (biaya panggil)
+//             const top = dp[j];
+//             const left = dp[j - 1];
+            
+//             dp[j] = row[j] + (top < left ? top : left);
+//         }
+//     }
+
+//     return dp[n - 1];
+// }
+
 function minPathSum(grid: number[][]): number {
     const m = grid.length;
-    if (m === 0) return 0;
     const n = grid[0].length;
 
-    // 1. Pakai 1D TypedArray (Uint32Array) - Lebih cepat di memori dibanding Array biasa
-    // Kita hanya butuh satu baris untuk menyimpan state (Space: O(n))
-    const dp = new Uint32Array(n);
-
-    // 2. Pre-fill elemen pertama
-    dp[0] = grid[0][0];
-
-    // 3. Isi baris pertama (Hanya bisa gerak ke kanan)
+    // 1. Baris pertama (kalkulasi manual untuk hindari 'if' di dalam loop utama)
     for (let j = 1; j < n; j++) {
-        dp[j] = dp[j - 1] + grid[0][j];
+        grid[0][j] += grid[0][j - 1];
     }
 
-    // 4. Proses baris sisanya
+    // 2. Kolom pertama (kalkulasi manual)
     for (let i = 1; i < m; i++) {
-        const row = grid[i]; // Cache baris agar tidak akses properti berulang kali
-        
-        // Update kolom pertama baris i (Hanya bisa dari atas)
-        dp[0] += row[0];
+        grid[i][0] += grid[i - 1][0];
+    }
 
+    // 3. Loop utama (Tanpa 'if' sama sekali di dalam)
+    for (let i = 1; i < m; i++) {
+        const currentRow = grid[i];
+        const prevRow = grid[i - 1];
         for (let j = 1; j < n; j++) {
-            // 5. Gunakan operator Ternary daripada Math.min
-            // Math.min adalah function call yang punya overhead (biaya panggil)
-            const top = dp[j];
-            const left = dp[j - 1];
-            
-            dp[j] = row[j] + (top < left ? top : left);
+            // Akses langsung dan ternary - ini jalur tercepat bagi compiler V8
+            const top = prevRow[j];
+            const left = currentRow[j - 1];
+            currentRow[j] += (top < left ? top : left);
         }
     }
 
-    return dp[n - 1];
+    return grid[m - 1][n - 1];
 }
