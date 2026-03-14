@@ -56,20 +56,57 @@
 //     return solve(m - 1, n - 1);
 // }
 
+// function minPathSum(grid: number[][]): number {
+//     const m = grid.length;
+//     const n = grid[0].length;
+
+//     for (let i = 0; i < m; i++) {
+//         for (let j = 0; j < n; j++) {
+//             if (i === 0 && j === 0) continue;
+            
+//             // Logika digabung untuk mengurangi jumlah pengecekan 'if'
+//             const top = i > 0 ? grid[i - 1][j] : Infinity;
+//             const left = j > 0 ? grid[i][j - 1] : Infinity;
+            
+//             grid[i][j] += Math.min(top, left);
+//         }
+//     }
+//     return grid[m - 1][n - 1];
+// }
+
 function minPathSum(grid: number[][]): number {
     const m = grid.length;
+    if (m === 0) return 0;
     const n = grid[0].length;
 
-    for (let i = 0; i < m; i++) {
-        for (let j = 0; j < n; j++) {
-            if (i === 0 && j === 0) continue;
+    // 1. Pakai 1D TypedArray (Uint32Array) - Lebih cepat di memori dibanding Array biasa
+    // Kita hanya butuh satu baris untuk menyimpan state (Space: O(n))
+    const dp = new Uint32Array(n);
+
+    // 2. Pre-fill elemen pertama
+    dp[0] = grid[0][0];
+
+    // 3. Isi baris pertama (Hanya bisa gerak ke kanan)
+    for (let j = 1; j < n; j++) {
+        dp[j] = dp[j - 1] + grid[0][j];
+    }
+
+    // 4. Proses baris sisanya
+    for (let i = 1; i < m; i++) {
+        const row = grid[i]; // Cache baris agar tidak akses properti berulang kali
+        
+        // Update kolom pertama baris i (Hanya bisa dari atas)
+        dp[0] += row[0];
+
+        for (let j = 1; j < n; j++) {
+            // 5. Gunakan operator Ternary daripada Math.min
+            // Math.min adalah function call yang punya overhead (biaya panggil)
+            const top = dp[j];
+            const left = dp[j - 1];
             
-            // Logika digabung untuk mengurangi jumlah pengecekan 'if'
-            const top = i > 0 ? grid[i - 1][j] : Infinity;
-            const left = j > 0 ? grid[i][j - 1] : Infinity;
-            
-            grid[i][j] += Math.min(top, left);
+            dp[j] = row[j] + (top < left ? top : left);
         }
     }
-    return grid[m - 1][n - 1];
+
+    return dp[n - 1];
 }
