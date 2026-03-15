@@ -12,16 +12,37 @@
  * }
  */
 
+// function inorderTraversal(root: TreeNode | null): number[] {
+//     const res = []; 
+
+//     function transvere(node: TreeNode | null){
+//         if(!node) return; 
+//         transvere(node.left); 
+//         res.push(node.val); 
+//         transvere(node.right);
+//     }
+
+//     transvere(root);
+//     return res;
+// };
+
 function inorderTraversal(root: TreeNode | null): number[] {
     const res = []; 
 
-    function transvere(node: TreeNode | null){
-        if(!node) return; 
-        transvere(node.left); 
-        res.push(node.val); 
-        transvere(node.right);
+    let curr = root;
+    const stack = [];
+
+    while(curr !== null || stack.length > 0){
+        while(curr !== null){
+            stack.push(curr); 
+            curr = curr.left;
+        }
+
+        curr = stack.pop(); 
+        res.push(curr.val)
+
+        curr = curr.right
     }
 
-    transvere(root);
-    return res;
+    return res; 
 };
