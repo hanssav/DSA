@@ -3,7 +3,6 @@ function constructTransformedArray(nums: number[]): number[] {
     const res: number[] = new Array(n)
 
     for(let i = 0; i < n; i++){
-        console.log(res)
         const val = nums[i];
         let idx = (i + val) % n;;
 
