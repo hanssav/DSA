@@ -37,38 +37,76 @@
 //     return dp[n][m];
 // }
 
+// function isInterleave(s1: string, s2: string, s3: string): boolean {
+//     const n = s1.length;
+//     const m = s2.length;
+
+//     if (n + m !== s3.length) return false;
+
+//     // Gunakan array 1D untuk menghemat alokasi memori
+//     const dp = new Uint8Array(m + 1); // Uint8Array lebih cepat dari boolean array biasa
+
+//     // Base case: string kosong
+//     dp[0] = 1;
+
+//     // Inisialisasi baris pertama (hanya s2)
+//     for (let j = 1; j <= m; j++) {
+//         dp[j] = (dp[j - 1] && s2[j - 1] === s3[j - 1]) ? 1 : 0;
+//     }
+
+//     // Iterasi untuk setiap karakter di s1
+//     for (let i = 1; i <= n; i++) {
+//         // Update dp[0] untuk kolom pertama (hanya s1)
+//         dp[0] = (dp[0] && s1[i - 1] === s3[i - 1]) ? 1 : 0;
+
+//         for (let j = 1; j <= m; j++) {
+//             const charS3 = s3[i + j - 1];
+            
+//             // Logika: (Bisa dari atas?) ATAU (Bisa dari kiri?)
+//             const fromAbove = dp[j] && s1[i - 1] === charS3;
+//             const fromLeft = dp[j - 1] && s2[j - 1] === charS3;
+
+//             dp[j] = (fromAbove || fromLeft) ? 1 : 0;
+//         }
+//     }
+
+//     return dp[m] === 1;
+// }
+
 function isInterleave(s1: string, s2: string, s3: string): boolean {
     const n = s1.length;
     const m = s2.length;
 
     if (n + m !== s3.length) return false;
 
-    // Gunakan array 1D untuk menghemat alokasi memori
-    const dp = new Uint8Array(m + 1); // Uint8Array lebih cepat dari boolean array biasa
+    // Cache untuk menyimpan hasil yang gagal (0: belum dicek, 1: gagal)
+    // Kita tidak butuh simpan yang "true" karena jika true langsung return
+    const memo = new Uint8Array((n + 1) * (m + 1));
 
-    // Base case: string kosong
-    dp[0] = 1;
+    function check(i: number, j: number): boolean {
+        // Jika sudah sampai ujung s3
+        if (i + j === s3.length) return true;
 
-    // Inisialisasi baris pertama (hanya s2)
-    for (let j = 1; j <= m; j++) {
-        dp[j] = (dp[j - 1] && s2[j - 1] === s3[j - 1]) ? 1 : 0;
-    }
+        // Cek memo (indeks 2D ke 1D)
+        const key = i * (m + 1) + j;
+        if (memo[key]) return false;
 
-    // Iterasi untuk setiap karakter di s1
-    for (let i = 1; i <= n; i++) {
-        // Update dp[0] untuk kolom pertama (hanya s1)
-        dp[0] = (dp[0] && s1[i - 1] === s3[i - 1]) ? 1 : 0;
+        const charS3 = s3[i + j];
 
-        for (let j = 1; j <= m; j++) {
-            const charS3 = s3[i + j - 1];
-            
-            // Logika: (Bisa dari atas?) ATAU (Bisa dari kiri?)
-            const fromAbove = dp[j] && s1[i - 1] === charS3;
-            const fromLeft = dp[j - 1] && s2[j - 1] === charS3;
-
-            dp[j] = (fromAbove || fromLeft) ? 1 : 0;
+        // Opsi 1: Ambil dari s1
+        if (i < n && s1[i] === charS3) {
+            if (check(i + 1, j)) return true;
         }
+
+        // Opsi 2: Ambil dari s2
+        if (j < m && s2[j] === charS3) {
+            if (check(i, j + 1)) return true;
+        }
+
+        // Jika kedua opsi gagal, tandai di memo agar tidak dicek lagi
+        memo[key] = 1;
+        return false;
     }
 
-    return dp[m] === 1;
+    return check(0, 0);
 }
