@@ -55,32 +55,70 @@
 //     return dp[n];
 // }
 
+// function numDecodings(s: string): number {
+//     if (!s || s[0] === '0') return 0;
+
+//     let prev2 = 1; // Analog dengan dp[i-2]
+//     let prev1 = 1; // Analog dengan dp[i-1]
+
+//     for (let i = 1; i < s.length; i++) {
+//         let current = 0;
+        
+//         // Cek satu digit
+//         if (s[i] !== '0') {
+//             current += prev1;
+//         }
+
+//         // Cek dua digit
+//         const double = parseInt(s.substring(i - 1, i + 1));
+//         if (double >= 10 && double <= 26) {
+//             current += prev2;
+//         }
+
+//         // Geser variabel untuk iterasi berikutnya
+//         prev2 = prev1;
+//         prev1 = current;
+        
+//         // Jika di tengah jalan tidak ada cara sama sekali
+//         if (current === 0) return 0;
+//     }
+
+//     return prev1;
+// }
+
 function numDecodings(s: string): number {
-    if (!s || s[0] === '0') return 0;
+    const n = s.length;
+    if (n === 0 || s[0] === '0') return 0;
 
-    let prev2 = 1; // Analog dengan dp[i-2]
-    let prev1 = 1; // Analog dengan dp[i-1]
+    // prev2 adalah dp[i-2], prev1 adalah dp[i-1]
+    let prev2 = 1;
+    let prev1 = 1;
 
-    for (let i = 1; i < s.length; i++) {
+    for (let i = 1; i < n; i++) {
         let current = 0;
         
-        // Cek satu digit
+        // Cek satu digit: s[i]
+        // Jika digit saat ini bukan '0', kita bisa meneruskan jumlah cara dari prev1
         if (s[i] !== '0') {
             current += prev1;
         }
 
-        // Cek dua digit
-        const double = parseInt(s.substring(i - 1, i + 1));
-        if (double >= 10 && double <= 26) {
+        // Cek dua digit: s[i-1]s[i]
+        // Kita hitung manual angkanya untuk menghindari substring() yang memakan memori
+        const ten = (s.charCodeAt(i - 1) - 48) * 10;
+        const one = s.charCodeAt(i) - 48;
+        const twoDigit = ten + one;
+
+        if (twoDigit >= 10 && twoDigit <= 26) {
             current += prev2;
         }
 
-        // Geser variabel untuk iterasi berikutnya
+        // Jika di tengah jalan tidak ada cara untuk lanjut (misal ketemu "30" atau "00")
+        if (current === 0) return 0;
+
+        // Geser posisi untuk iterasi berikutnya
         prev2 = prev1;
         prev1 = current;
-        
-        // Jika di tengah jalan tidak ada cara sama sekali
-        if (current === 0) return 0;
     }
 
     return prev1;
