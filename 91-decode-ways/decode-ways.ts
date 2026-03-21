@@ -86,40 +86,73 @@
 //     return prev1;
 // }
 
+// function numDecodings(s: string): number {
+//     const n = s.length;
+//     if (n === 0 || s[0] === '0') return 0;
+
+//     // prev2 adalah dp[i-2], prev1 adalah dp[i-1]
+//     let prev2 = 1;
+//     let prev1 = 1;
+
+//     for (let i = 1; i < n; i++) {
+//         let current = 0;
+        
+//         // Cek satu digit: s[i]
+//         // Jika digit saat ini bukan '0', kita bisa meneruskan jumlah cara dari prev1
+//         if (s[i] !== '0') {
+//             current += prev1;
+//         }
+
+//         // Cek dua digit: s[i-1]s[i]
+//         // Kita hitung manual angkanya untuk menghindari substring() yang memakan memori
+//         const ten = (s.charCodeAt(i - 1) - 48) * 10;
+//         const one = s.charCodeAt(i) - 48;
+//         const twoDigit = ten + one;
+
+//         if (twoDigit >= 10 && twoDigit <= 26) {
+//             current += prev2;
+//         }
+
+//         // Jika di tengah jalan tidak ada cara untuk lanjut (misal ketemu "30" atau "00")
+//         if (current === 0) return 0;
+
+//         // Geser posisi untuk iterasi berikutnya
+//         prev2 = prev1;
+//         prev1 = current;
+//     }
+
+//     return prev1;
+// }
+
 function numDecodings(s: string): number {
     const n = s.length;
-    if (n === 0 || s[0] === '0') return 0;
+    // Paling cepat: variabel sederhana untuk menyimpan hasil sebelumnya
+    let next1 = 1; // Merepresentasikan dp[i+1]
+    let next2 = 0; // Merepresentasikan dp[i+2]
 
-    // prev2 adalah dp[i-2], prev1 adalah dp[i-1]
-    let prev2 = 1;
-    let prev1 = 1;
-
-    for (let i = 1; i < n; i++) {
+    for (let i = n - 1; i >= 0; i--) {
         let current = 0;
-        
-        // Cek satu digit: s[i]
-        // Jika digit saat ini bukan '0', kita bisa meneruskan jumlah cara dari prev1
-        if (s[i] !== '0') {
-            current += prev1;
+        const char = s[i];
+
+        // Jika karakter adalah '0', current tetap 0 (tidak bisa di-decode)
+        if (char !== '0') {
+            // Opsi 1: Ambil 1 digit (pasti valid karena bukan '0')
+            current = next1;
+
+            // Opsi 2: Ambil 2 digit (cek jika i+1 tersedia dan <= 26)
+            if (i + 1 < n) {
+                // Konversi manual ke angka (lebih cepat dari parseInt)
+                const twoDigit = (char.charCodeAt(0) - 48) * 10 + (s.charCodeAt(i + 1) - 48);
+                if (twoDigit <= 26) {
+                    current += next2;
+                }
+            }
         }
 
-        // Cek dua digit: s[i-1]s[i]
-        // Kita hitung manual angkanya untuk menghindari substring() yang memakan memori
-        const ten = (s.charCodeAt(i - 1) - 48) * 10;
-        const one = s.charCodeAt(i) - 48;
-        const twoDigit = ten + one;
-
-        if (twoDigit >= 10 && twoDigit <= 26) {
-            current += prev2;
-        }
-
-        // Jika di tengah jalan tidak ada cara untuk lanjut (misal ketemu "30" atau "00")
-        if (current === 0) return 0;
-
-        // Geser posisi untuk iterasi berikutnya
-        prev2 = prev1;
-        prev1 = current;
+        // Geser pointer
+        next2 = next1;
+        next1 = current;
     }
 
-    return prev1;
+    return next1;
 }
