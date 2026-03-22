@@ -26,33 +26,55 @@
 //     return dp.reduce((sum, val) => sum + val, 0);
 // }
 
+// function findSubstringInWraproundString(s: string): number {
+//     if (!s) return 0;
+    
+//     const maxLenMap: Map<string, number> = new Map();
+//     let maxLen = 1;
+    
+//     for (let i = 0; i < s.length; i++) {
+//         if (i > 0 && isConsecutive(s[i - 1], s[i])) {
+//             maxLen++;
+//         } else {
+//             maxLen = 1;
+//         }
+        
+//         const currChar = s[i];
+//         maxLenMap.set(currChar, Math.max(maxLenMap.get(currChar) || 0, maxLen));
+//     }
+    
+//     // Sum up all values
+//     let total = 0;
+//     for (const value of maxLenMap.values()) {
+//         total += value;
+//     }
+//     return total;
+// }
+
+// function isConsecutive(prev: string, curr: string): boolean {
+//     const prevCode = prev.charCodeAt(0) - 97;
+//     const currCode = curr.charCodeAt(0) - 97;
+//     return (prevCode === 25 && currCode === 0) || prevCode + 1 === currCode;
+// }
+
 function findSubstringInWraproundString(s: string): number {
     if (!s) return 0;
     
-    const maxLenMap: Map<string, number> = new Map();
-    let maxLen = 1;
+    const maxEndingHere: number[] = new Array(26).fill(0);
+    let currentStreak = 1;
     
     for (let i = 0; i < s.length; i++) {
-        if (i > 0 && isConsecutive(s[i - 1], s[i])) {
-            maxLen++;
+        if (i > 0 && (s.charCodeAt(i) - s.charCodeAt(i - 1) === 1 || 
+            (s[i - 1] === 'z' && s[i] === 'a'))) {
+            currentStreak++;
         } else {
-            maxLen = 1;
+            currentStreak = 1;
         }
         
-        const currChar = s[i];
-        maxLenMap.set(currChar, Math.max(maxLenMap.get(currChar) || 0, maxLen));
+        const index = s.charCodeAt(i) - 97;
+        maxEndingHere[index] = Math.max(maxEndingHere[index], currentStreak);
     }
     
-    // Sum up all values
-    let total = 0;
-    for (const value of maxLenMap.values()) {
-        total += value;
-    }
-    return total;
-}
-
-function isConsecutive(prev: string, curr: string): boolean {
-    const prevCode = prev.charCodeAt(0) - 97;
-    const currCode = curr.charCodeAt(0) - 97;
-    return (prevCode === 25 && currCode === 0) || prevCode + 1 === currCode;
+    // Calculate total unique substrings
+    return maxEndingHere.reduce((sum, len) => sum + len, 0);
 }
