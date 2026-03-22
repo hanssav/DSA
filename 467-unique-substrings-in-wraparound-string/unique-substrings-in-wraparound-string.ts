@@ -57,24 +57,49 @@
 //     return (prevCode === 25 && currCode === 0) || prevCode + 1 === currCode;
 // }
 
+// function findSubstringInWraproundString(s: string): number {
+//     if (!s) return 0;
+    
+//     const maxEndingHere: number[] = new Array(26).fill(0);
+//     let currentStreak = 1;
+    
+//     for (let i = 0; i < s.length; i++) {
+//         if (i > 0 && (s.charCodeAt(i) - s.charCodeAt(i - 1) === 1 || 
+//             (s[i - 1] === 'z' && s[i] === 'a'))) {
+//             currentStreak++;
+//         } else {
+//             currentStreak = 1;
+//         }
+        
+//         const index = s.charCodeAt(i) - 97;
+//         maxEndingHere[index] = Math.max(maxEndingHere[index], currentStreak);
+//     }
+    
+//     // Calculate total unique substrings
+//     return maxEndingHere.reduce((sum, len) => sum + len, 0);
+// }
+
 function findSubstringInWraproundString(s: string): number {
     if (!s) return 0;
     
-    const maxEndingHere: number[] = new Array(26).fill(0);
-    let currentStreak = 1;
+    const maxLen: number[] = new Array(26).fill(0);
+    let windowStart = 0;
     
-    for (let i = 0; i < s.length; i++) {
-        if (i > 0 && (s.charCodeAt(i) - s.charCodeAt(i - 1) === 1 || 
-            (s[i - 1] === 'z' && s[i] === 'a'))) {
-            currentStreak++;
-        } else {
-            currentStreak = 1;
+    for (let windowEnd = 0; windowEnd < s.length; windowEnd++) {
+        // Check if current character breaks the consecutive sequence
+        if (windowEnd > 0 && !isWraparoundConsecutive(s[windowEnd - 1], s[windowEnd])) {
+            windowStart = windowEnd;
         }
         
-        const index = s.charCodeAt(i) - 97;
-        maxEndingHere[index] = Math.max(maxEndingHere[index], currentStreak);
+        const len = windowEnd - windowStart + 1;
+        const charIndex = s.charCodeAt(windowEnd) - 97;
+        maxLen[charIndex] = Math.max(maxLen[charIndex], len);
     }
     
-    // Calculate total unique substrings
-    return maxEndingHere.reduce((sum, len) => sum + len, 0);
+    return maxLen.reduce((sum, val) => sum + val, 0);
+}
+
+function isWraparoundConsecutive(prev: string, curr: string): boolean {
+    return (prev === 'z' && curr === 'a') || 
+           curr.charCodeAt(0) - prev.charCodeAt(0) === 1;
 }
