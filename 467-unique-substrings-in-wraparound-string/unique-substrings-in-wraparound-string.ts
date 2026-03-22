@@ -104,38 +104,68 @@
 //            curr.charCodeAt(0) - prev.charCodeAt(0) === 1;
 // }
 
+// function findSubstringInWraproundString(s: string): number {
+//     if (s.length === 0) return 0;
+//     if (s.length === 1) return 1;
+    
+//     const maxLengths: number[] = new Array(26).fill(0);
+//     let currentLength = 1;
+    
+//     // Process first character
+//     maxLengths[s.charCodeAt(0) - 97] = 1;
+    
+//     for (let i = 1; i < s.length; i++) {
+//         const prevCode = s.charCodeAt(i - 1) - 97;
+//         const currCode = s.charCodeAt(i) - 97;
+        
+//         // Check if characters are consecutive in wraparound string
+//         if ((prevCode === 25 && currCode === 0) || currCode === prevCode + 1) {
+//             currentLength++;
+//         } else {
+//             currentLength = 1;
+//         }
+        
+//         // Update max length for current character
+//         if (currentLength > maxLengths[currCode]) {
+//             maxLengths[currCode] = currentLength;
+//         }
+//     }
+    
+//     // Sum all maximum lengths (each represents unique substrings ending with that char)
+//     let total = 0;
+//     for (let i = 0; i < 26; i++) {
+//         total += maxLengths[i];
+//     }
+    
+//     return total;
+// }
+
 function findSubstringInWraproundString(s: string): number {
     if (s.length === 0) return 0;
-    if (s.length === 1) return 1;
+
+    // Simpan panjang substring terpanjang yang berakhir di karakter 'a'-'z'
+    const maxLenEndingWith: number[] = new Array(26).fill(0);
     
-    const maxLengths: number[] = new Array(26).fill(0);
-    let currentLength = 1;
-    
-    // Process first character
-    maxLengths[s.charCodeAt(0) - 97] = 1;
-    
-    for (let i = 1; i < s.length; i++) {
-        const prevCode = s.charCodeAt(i - 1) - 97;
-        const currCode = s.charCodeAt(i) - 97;
-        
-        // Check if characters are consecutive in wraparound string
-        if ((prevCode === 25 && currCode === 0) || currCode === prevCode + 1) {
-            currentLength++;
+    let currentStreak = 0;
+
+    for (let i = 0; i < s.length; i++) {
+        const curr = s.charCodeAt(i) - 97; // Ambil indeks 0-25
+        const prev = i > 0 ? s.charCodeAt(i - 1) - 97 : -1;
+
+        // Cek apakah karakter sekarang melanjutkan urutan alfabet (termasuk z -> a)
+        if (i > 0 && (curr === prev + 1 || (prev === 25 && curr === 0))) {
+            currentStreak++;
         } else {
-            currentLength = 1;
+            currentStreak = 1;
         }
-        
-        // Update max length for current character
-        if (currentLength > maxLengths[currCode]) {
-            maxLengths[currCode] = currentLength;
+
+        // Update: Kita hanya peduli pada streak TERPANJANG yang berakhir di huruf ini
+        // Jika kita punya "abc", maka untuk 'c' maxLen-nya adalah 3 (yaitu "c", "bc", "abc")
+        if (currentStreak > maxLenEndingWith[curr]) {
+            maxLenEndingWith[curr] = currentStreak;
         }
     }
-    
-    // Sum all maximum lengths (each represents unique substrings ending with that char)
-    let total = 0;
-    for (let i = 0; i < 26; i++) {
-        total += maxLengths[i];
-    }
-    
-    return total;
+
+    // Total semua nilai di array adalah jumlah semua substring unik
+    return maxLenEndingWith.reduce((acc, val) => acc + val, 0);
 }
