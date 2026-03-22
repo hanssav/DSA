@@ -140,32 +140,70 @@
 //     return total;
 // }
 
-function findSubstringInWraproundString(s: string): number {
-    if (s.length === 0) return 0;
+// function findSubstringInWraproundString(s: string): number {
+//     if (s.length === 0) return 0;
 
-    // Simpan panjang substring terpanjang yang berakhir di karakter 'a'-'z'
-    const maxLenEndingWith: number[] = new Array(26).fill(0);
+//     // Simpan panjang substring terpanjang yang berakhir di karakter 'a'-'z'
+//     const maxLenEndingWith: number[] = new Array(26).fill(0);
+    
+//     let currentStreak = 0;
+
+//     for (let i = 0; i < s.length; i++) {
+//         const curr = s.charCodeAt(i) - 97; // Ambil indeks 0-25
+//         const prev = i > 0 ? s.charCodeAt(i - 1) - 97 : -1;
+
+//         // Cek apakah karakter sekarang melanjutkan urutan alfabet (termasuk z -> a)
+//         if (i > 0 && (curr === prev + 1 || (prev === 25 && curr === 0))) {
+//             currentStreak++;
+//         } else {
+//             currentStreak = 1;
+//         }
+
+//         // Update: Kita hanya peduli pada streak TERPANJANG yang berakhir di huruf ini
+//         // Jika kita punya "abc", maka untuk 'c' maxLen-nya adalah 3 (yaitu "c", "bc", "abc")
+//         if (currentStreak > maxLenEndingWith[curr]) {
+//             maxLenEndingWith[curr] = currentStreak;
+//         }
+//     }
+
+//     // Total semua nilai di array adalah jumlah semua substring unik
+//     return maxLenEndingWith.reduce((acc, val) => acc + val, 0);
+// }
+
+function findSubstringInWraproundString(s: string): number {
+    const n = s.length;
+    if (n === 0) return 0;
+
+    // Uint32Array lebih cepat dan hemat memori daripada Array biasa di JS
+    const maxLenEndingWith = new Uint32Array(26);
     
     let currentStreak = 0;
+    let prevCharCode = -1;
 
-    for (let i = 0; i < s.length; i++) {
-        const curr = s.charCodeAt(i) - 97; // Ambil indeks 0-25
-        const prev = i > 0 ? s.charCodeAt(i - 1) - 97 : -1;
-
-        // Cek apakah karakter sekarang melanjutkan urutan alfabet (termasuk z -> a)
-        if (i > 0 && (curr === prev + 1 || (prev === 25 && curr === 0))) {
+    for (let i = 0; i < n; i++) {
+        const currCharCode = s.charCodeAt(i);
+        
+        // Logika: (curr - prev == 1) ATAU (prev == 'z' && curr == 'a')
+        // Bisa diringkas dengan modulo: (curr - prev + 25) % 26 === 0
+        if (i > 0 && (currCharCode - prevCharCode === 1 || prevCharCode - currCharCode === 25)) {
             currentStreak++;
         } else {
             currentStreak = 1;
         }
 
-        // Update: Kita hanya peduli pada streak TERPANJANG yang berakhir di huruf ini
-        // Jika kita punya "abc", maka untuk 'c' maxLen-nya adalah 3 (yaitu "c", "bc", "abc")
-        if (currentStreak > maxLenEndingWith[curr]) {
-            maxLenEndingWith[curr] = currentStreak;
+        const charIdx = currCharCode - 97; // 'a' adalah 97
+        if (currentStreak > maxLenEndingWith[charIdx]) {
+            maxLenEndingWith[charIdx] = currentStreak;
         }
+        
+        prevCharCode = currCharCode;
     }
 
-    // Total semua nilai di array adalah jumlah semua substring unik
-    return maxLenEndingWith.reduce((acc, val) => acc + val, 0);
+    // Loop manual untuk penjumlahan (lebih cepat dari .reduce)
+    let total = 0;
+    for (let j = 0; j < 26; j++) {
+        total += maxLenEndingWith[j];
+    }
+
+    return total;
 }
